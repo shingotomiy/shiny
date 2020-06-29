@@ -185,16 +185,58 @@ selectizeInput <- function(inputId, ..., options = NULL, width = NULL) {
 selectizeIt <- function(inputId, select, options, nonempty = FALSE) {
   res <- checkAsIs(options)
 
-  selectizeDep <- htmlDependency(
-    "selectize", "0.11.2", c(href = "shared/selectize"),
-    stylesheet = "css/selectize.bootstrap3.css",
-    head = format(tagList(
-      HTML('<!--[if lt IE 9]>'),
-      tags$script(src = 'shared/selectize/js/es5-shim.min.js'),
-      HTML('<![endif]-->'),
-      tags$script(src = 'shared/selectize/js/selectize.min.js')
-    ))
-  )
+  # Compile selectize Sass against a bootstraplib theme (if one exists)
+  selectizeDep <- if (useBsTheme()) {
+    scss <- system.file(package = "shiny", "www", "shared", "selectize", "scss")
+    is_bs3 <- "3" %in% bootstraplib::theme_version()
+    scss_file <- if (is_bs3) {
+      file.path(scss, "selectize.bootstrap3.scss")
+    } else {
+      file.path(scss, "selectize.bootstrap4.scss")
+    }
+    tmpdir <- tempfile("selectize-custom")
+    dir.create(tmpdir)
+    bootstraplib::bootstrap_sass(
+      output = file.path(tmpdir, "selectize-custom.css"),
+      rules = list(
+        # For some reason the selectize.bootstrap.scss hard codes these values
+        # assuming a normal white bg black fg theme...these are better default values
+        if (is_bs3) {
+          list(
+            "selectize-color-item" = "$gray-lighter !default;",
+            "selectize-color-item-border" = "$gray-light !default;",
+            "selectize-color-item-active-text" = "$white !default;",
+            "selectize-color-item-active-border" = "$gray-base !default;"
+          )
+        } else {
+          list(
+            "selectize-color-item" = "gray('100') !default;",
+            "selectize-color-item-border" = "gray('400') !default;",
+            "selectize-color-item-active-text" = "$white !default;",
+            "selectize-color-item-active-border" = "$black !default;"
+          )
+        },
+        sass::sass_file(scss_file)
+      ),
+      options = sass::sass_options(output_style = "compressed")
+    )
+    htmlDependency(
+      "selectize", "0.11.2", tmpdir,
+      stylesheet = "selectize-custom.css",
+      head = format(tags$script(src = 'shared/selectize/js/selectize.min.js'))
+    )
+  } else {
+    htmlDependency(
+      "selectize", "0.11.2", c(href = "shared/selectize"),
+      stylesheet = "css/selectize.bootstrap3.css",
+      head = format(tagList(
+        HTML('<!--[if lt IE 9]>'),
+        tags$script(src = 'shared/selectize/js/es5-shim.min.js'),
+        HTML('<![endif]-->'),
+        tags$script(src = 'shared/selectize/js/selectize.min.js')
+      ))
+    )
+  }
 
   if ('drag_drop' %in% options$plugins) {
     selectizeDep <- list(selectizeDep, htmlDependency(
@@ -216,10 +258,6 @@ selectizeIt <- function(inputId, select, options, nonempty = FALSE) {
 
   attachDependencies(select, selectizeDep)
 }
-
-
-
-
 
 
 
