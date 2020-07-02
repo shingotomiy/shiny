@@ -261,7 +261,6 @@ selectizeIt <- function(inputId, select, options, nonempty = FALSE) {
 
 
 
-
 #' Select variables from a data frame
 #'
 #' Create a select list that can be used to choose a single or multiple items
