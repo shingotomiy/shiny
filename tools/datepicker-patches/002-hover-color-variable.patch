@@ -1,0 +1,40 @@
+diff --git a/inst/www/shared/datepicker/scss/build3.scss b/inst/www/shared/datepicker/scss/build3.scss
+index e74bef68..7fbb7a41 100644
+--- a/inst/www/shared/datepicker/scss/build3.scss
++++ b/inst/www/shared/datepicker/scss/build3.scss
+@@ -14,6 +14,7 @@ $gray-lighter:           lighten(#000, 93.5%) !default; // #eee
+ $brand-primary:         darken(#428bca, 6.5%) !default; // #337ab7
+ 
+ $btn-primary-color:              #fff !default;
++$btn-primary-color-hover:        null !default;
+ $btn-primary-bg:                 $brand-primary !default;
+ $btn-primary-border:             darken($btn-primary-bg, 5%) !default;
+ 
+diff --git a/inst/www/shared/datepicker/scss/datepicker3.scss b/inst/www/shared/datepicker/scss/datepicker3.scss
+index b3aa2006..3e8d797c 100644
+--- a/inst/www/shared/datepicker/scss/datepicker3.scss
++++ b/inst/www/shared/datepicker/scss/datepicker3.scss
+@@ -83,6 +83,7 @@
+ 		}
+ 		&.day:hover,
+ 		&.focused {
++		  color: $btn-primary-color-hover;
+ 			background: $gray-lighter;
+ 			cursor: pointer;
+ 		}
+@@ -181,6 +182,7 @@
+ 			border-radius: 4px;
+ 			&:hover,
+ 			&.focused {
++			  color: $btn-primary-color-hover;
+ 				background: $gray-lighter;
+ 			}
+ 			&.disabled,
+@@ -213,6 +215,7 @@
+ 	tfoot tr th {
+ 		cursor: pointer;
+ 		&:hover {
++		  color: $btn-primary-color-hover;
+ 			background: $gray-lighter;
+ 		}
+ 	}
