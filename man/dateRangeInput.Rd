@@ -17,7 +17,9 @@ dateRangeInput(
   language = "en",
   separator = " to ",
   width = NULL,
-  autoclose = TRUE
+  autoclose = TRUE,
+  ...,
+  sassVars = list()
 )
 }
 \arguments{
@@ -64,6 +66,14 @@ see \code{\link[=validateCssUnit]{validateCssUnit()}}.}
 
 \item{autoclose}{Whether or not to close the datepicker immediately when a
 date is selected.}
+
+\item{...}{not currently used.}
+
+\item{sassVars}{a list of Sass variables for influencing the date input's
+default CSS styles. \href{https://github.com/rstudio/shiny/tree/master/inst/www/shared/datepicker/scss/build3.scss}{See here}
+for a list of relevant variables. Since these variables may already be
+defined in a \strong{bootstraplib} theme, \code{!default} flags likely shouldn't
+be included in these variable definitions.}
 }
 \description{
 Creates a pair of text inputs which, when clicked on, bring up calendars that

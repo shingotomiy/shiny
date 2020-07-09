@@ -17,7 +17,9 @@ dateInput(
   width = NULL,
   autoclose = TRUE,
   datesdisabled = NULL,
-  daysofweekdisabled = NULL
+  daysofweekdisabled = NULL,
+  ...,
+  sassVars = list()
 )
 }
 \arguments{
@@ -64,6 +66,14 @@ or a string in \code{yyyy-mm-dd} format.}
 
 \item{daysofweekdisabled}{Days of the week that should be disabled. Should be
 a integer vector with values from 0 (Sunday) to 6 (Saturday).}
+
+\item{...}{not currently used.}
+
+\item{sassVars}{a list of Sass variables for influencing the date input's
+default CSS styles. \href{https://github.com/rstudio/shiny/tree/master/inst/www/shared/datepicker/scss/build3.scss}{See here}
+for a list of relevant variables. Since these variables may already be
+defined in a \strong{bootstraplib} theme, \code{!default} flags likely shouldn't
+be included in these variable definitions.}
 }
 \description{
 Creates a text input which, when clicked on, brings up a calendar that

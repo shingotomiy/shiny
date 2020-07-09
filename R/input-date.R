@@ -47,6 +47,12 @@
 #' or a string in `yyyy-mm-dd` format.
 #' @param daysofweekdisabled Days of the week that should be disabled. Should be
 #'   a integer vector with values from 0 (Sunday) to 6 (Saturday).
+#' @param ... not currently used.
+#' @param sassVars a list of Sass variables for influencing the date input's
+#'   default CSS styles. [See here](https://github.com/rstudio/shiny/tree/master/inst/www/shared/datepicker/scss/build3.scss)
+#'   for a list of relevant variables. Since these variables may already be
+#'   defined in a **bootstraplib** theme, `!default` flags likely shouldn't
+#'   be included in these variable definitions.
 #'
 #' @family input elements
 #' @seealso [dateRangeInput()], [updateDateInput()]
@@ -94,8 +100,7 @@
 dateInput <- function(inputId, label, value = NULL, min = NULL, max = NULL,
   format = "yyyy-mm-dd", startview = "month", weekstart = 0,
   language = "en", width = NULL, autoclose = TRUE,
-  datesdisabled = NULL, daysofweekdisabled = NULL,
-  sassVariables = list()) {
+  datesdisabled = NULL, daysofweekdisabled = NULL, ..., sassVars = list()) {
 
   value <- dateYMD(value, "value")
   min <- dateYMD(min, "min")
@@ -125,22 +130,18 @@ dateInput <- function(inputId, label, value = NULL, min = NULL, max = NULL,
                `data-date-days-of-week-disabled` =
                    jsonlite::toJSON(daysofweekdisabled, null = 'null')
     ),
-    datePickerDependencies(sassVariables)
+    datePickerDependencies(sassVars)
   )
 }
 
-datePickerDependencies <- function(sassVariables = list()) {
-
-  if (useBsTheme() || length(sassVariables) == 0) {
+datePickerDependencies <- function(sassVars = list()) {
+  if (useBsTheme() || length(sassVars) == 0) {
     scssDir <- system.file(package = "shiny", "www", "shared", "datepicker", "scss")
     tmpDir <- tempfile("datepicker-scss")
     dir.create(tmpDir)
     outFile <- file.path(tmpDir, "custom.css")
     sassFunc <- if (useBsTheme()) bootstraplib::bootstrap_sass else sass::sass
-    defaults <- list(
-      sassVariables %OR% "",
-      bsThemeDateDefaults()
-    )
+    defaults <- list(bsThemeDateDefaults(), sassVars)
     sassFunc(
       list(
         defaults,
@@ -148,17 +149,17 @@ datePickerDependencies <- function(sassVariables = list()) {
       ),
       output = outFile
     )
-    # Hash the skin and defaults so that the html dependency from one date-picker won't stomp another
+    # Hash the defaults so that the html dependency from one date-picker won't stomp another
     cssDependency <- htmlDependency(
       paste0("datepicker-datepicker-css-", digest::digest(defaults, "xxhash64")),
-      version = "1.9.0",
+      version = datePickerVersion,
       src = dirname(outFile),
       stylesheet = basename(outFile)
     )
   } else {
     cssDependency <- htmlDependency(
       "bootstrap-datepicker-css",
-      version = "1.9.0",
+      version = datePickerVersion,
       src = c(href = "shared/datepicker"),
       stylesheet = "css/bootstrap-datepicker3.min.css",
     )
@@ -168,7 +169,7 @@ datePickerDependencies <- function(sassVariables = list()) {
     cssDependency,
     htmlDependency(
       "bootstrap-datepicker-js",
-      version = "1.9.0",
+      version = datePickerVersion,
       c(href = "shared/datepicker"),
       script = "js/bootstrap-datepicker.min.js",
       # Need to enable noConflict mode. See #1346.
@@ -182,10 +183,9 @@ datePickerDependencies <- function(sassVariables = list()) {
 }
 
 
-
 bsThemeDateDefaults <- function() {
   if (!useBsTheme()) {
-    return("")
+    return(list())
   }
 
   version <- bootstraplib::theme_version()
