@@ -4,6 +4,27 @@ shiny 1.5.0.9000
 
 ## Full changelog
 
+### Themability & Bootstrap 4
+
+* Integration with the new [**bootstraplib** package](https://rstudio.github.io/bootstraplib/) via a new option named `bootstraplib`, making it easier to create custom styles from R without any CSS. For now, this option defaults to `FALSE`, but it may default to `TRUE` in a future version of Shiny. When set to `TRUE` and a **bootstraplib** theme is active, two things occur:
+
+  1. Various page layout functions that depend on `shiny::bootstrapLib()` (e.g., `fluidPage()`, `navbarPage()`) will take their Bootstrap dependency from `bootstraplib::bootstrap()`, effectively replacing the default (and static) version of Bootstrap 3 CSS with a customized version of Bootstrap 3 (or 4).
+  
+  2. Several input widgets that have their own opinionated CSS (i.e., `sliderInput()`, `selectizeInput()`, `dateInput()`, `dateRangeInput()`) will have their CSS informed by the active **bootstraplib** theme settings.
+ 
+These two points combined imply that it's now more straight-forward to customize [the main colors and fonts](https://rstudio.github.io/bootstraplib/articles/recipes.html#colors) of any Shiny app (at least those that use the **shiny** package to generate UI and/or another framework that doesn't override Bootstrap's default styles). For an example, here's how you could get `"myapp"` using Bootstrap 4 and a solarized theme:
+
+```r
+library(shiny)
+library(bootstraplib)
+shinyOptions(bootstraplib = TRUE)
+bs_theme_new()
+bs_theme_base_colors(bg = "#002B36", fg = "#EEE8D5")
+bs_theme_accent_colors(primary = "#2AA198")
+runApp("myapp")
+```
+
+
 ### Accessibility
 
 * Added [bootstrap accessibility plugin](https://github.com/paypal/bootstrap-accessibility-plugin) under the hood to improve accessibility of shiny apps for screen-reader and keyboard users: the enhancements include better navigations for alert, tooltip, popover, modal dialog, dropdown, tab Panel, collapse, and carousel elements. (#2911)
