@@ -51,11 +51,11 @@ To learn more we highly recommend going through:
 
 * The [Shiny Gallery](https://shiny.rstudio.com/gallery/) to see a variety of examples that demonstrate the functionality and power of the framework.
 
-* The [Shiny Articles](https://shiny.rstudio.com/articles/) to dive further into more involved topics.
+* [Shiny Articles](https://shiny.rstudio.com/articles/) to dive further into more advanced topics.
 
 ## A Note on Shiny UI
 
-Some UI functions implicitly require [Bootstrap](https://getbootstrap.com/) (e.g., `fluidPage()`, `column()`, etc). By default, these functions, by default, import Bootstrap 3, but are designed to be compatible with Bootstrap 4 as well. To learn how to upgrade the version Bootstrap, as well as customize the default styles from R, see [**bootstraplib**'s website](https://rstudio.github.io/bootstraplib).
+Some Shiny UI functions implicitly require [Bootstrap](https://getbootstrap.com/) (e.g., `fluidPage()`, `column()`, etc). These functions, import Bootstrap 3 by default, but are also compatible with **bootstraplib**'s patched version of Bootstrap 4+. See [**bootstraplib**'s website](https://rstudio.github.io/bootstraplib) for more on using different versions of Bootstrap, using Bootswatch themes, as well as [customizing Bootstrap's default styles](https://rstudio.github.io/bootstraplib/articles/recipes.html) from R (no CSS required!).
 
 Note also that the Shiny framework doesn't necessarily force the use of Bootstrap (or any other HTML/CSS framework for that matter), but avoiding Bootstrap will likely require writing your own HTML/CSS (in such case, [`htmlTemplate()` can be useful](https://shiny.rstudio.com/articles/templates.html)).
 
