@@ -42,31 +42,11 @@ renderPage <- function(ui, showcase=0, testMode=FALSE) {
     )
   }
 
-  jquery <- function() {
-    version <- getOption("shiny.jquery.version", 3)
-    if (version == 3) {
-      return(htmlDependency(
-        "jquery", "3.5.1",
-        c(href = "shared"),
-        script = "jquery.min.js"
-      ))
-    }
-    if (version == 1) {
-      return(htmlDependency(
-        "jquery", "1.12.4",
-        c(href = "shared/legacy"),
-        script = "jquery.min.js"
-      ))
-    }
-    stop("Unsupported version of jQuery: ", version)
-  }
-
-  shiny_deps <- list(
-    htmlDependency("json2", "2014.02.04", c(href="shared"), script = "json2-min.js"),
-    jquery(),
-    htmlDependency("shiny", utils::packageVersion("shiny"), c(href="shared"),
-      script = if (getOption("shiny.minified", TRUE)) "shiny.min.js" else "shiny.js",
-      stylesheet = "shiny.css")
+  shiny_deps <- c(
+    # TODO: is this still needed?
+    list(htmlDependency("json2", "2014.02.04", c(href="shared"), script = "json2-min.js")),
+    list(jqueryDependency()),
+    shinyDependencies()
   )
 
   if (testMode) {
@@ -78,6 +58,42 @@ renderPage <- function(ui, showcase=0, testMode=FALSE) {
 
   html <- renderDocument(ui, shiny_deps, processDep = createWebDependency)
   enc2utf8(paste(collapse = "\n", html))
+}
+
+shinyDependencies <- function() {
+  cssFile <- shinyCssFile()
+
+  # TODO: copy JS over to src dir
+  version <- utils::packageVersion("shiny")
+  list(
+    htmlDependency(
+      name = "shiny-css",
+      version = version,
+      src = cssFile$src,
+      stylesheet = cssFile$stylesheet
+    ),
+    htmlDependency(
+      name = "shiny-javascript",
+      version = version,
+      src = c(href = "shared"),
+      script = if (getOption("shiny.minified", TRUE)) "shiny.min.js" else "shiny.js"
+    )
+  )
+}
+
+shinyCssFile <- function() {
+  if (!useBsTheme()) {
+    return(list(src = c(href = "shared"), stylesheet = "shiny.css"))
+  }
+
+  scss_home <- system.file("www", "shared", "shiny_scss", package = "shiny")
+  scss_files <- file.path(scss_home, c("bootstrap.scss", "shiny.scss"))
+  outFile <- bootstrapSass(lapply(scss_files, sass::sass_file), "shiny")
+  list(src = c(file = dirname(outFile)), stylesheet = basename(outFile))
+}
+
+jqueryDependency <- function() {
+  jquerylib::jquery_core(getOption("shiny.jquery.version", 3))
 }
 
 #' Create a Shiny UI handler

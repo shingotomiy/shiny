@@ -88,7 +88,8 @@ Imports:
     fastmap (>= 1.0.0),
     withr,
     commonmark (>= 1.7),
-    glue (>= 1.3.2)
+    glue (>= 1.3.2),
+    jquerylib (>= 0.1.2)
 Suggests:
     datasets,
     Cairo (>= 1.5-5),
@@ -109,7 +110,8 @@ Suggests:
     bootstraplib (>= 0.1.0.9001)
 Remotes: 
     rstudio/sass,
-    rstudio/bootstraplib
+    rstudio/bootstraplib,
+    rstudio/jquerylib
 URL: http://shiny.rstudio.com
 BugReports: https://github.com/rstudio/shiny/issues
 Collate:
