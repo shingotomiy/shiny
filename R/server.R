@@ -750,6 +750,16 @@ runApp <- function(appDir=getwd(),
                    workerId="", quiet=FALSE,
                    display.mode=c("auto", "normal", "showcase"),
                    test.mode=getOption('shiny.testmode', FALSE)) {
+
+  if (is.character(appDir)) {
+    # Make sure that running an app dir/file won't affect bootstraplib's global state
+    old_theme <- bootstraplib::bs_theme_get()
+    on.exit(bootstraplib::bs_theme_set(old_theme), add = TRUE)
+  } else {
+    # Otherwise, we clear the global after exiting
+    on.exit(bootstraplib::bs_theme_clear(), add = TRUE)
+  }
+
   on.exit({
     handlerManager$clear()
   }, add = TRUE)
@@ -891,6 +901,8 @@ runApp <- function(appDir=getwd(),
         }
       }
     }
+
+
   }
 
   ## default is to show the .js, .css and .html files in the www directory
